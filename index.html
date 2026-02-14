@@ -7,119 +7,182 @@
 
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background: radial-gradient(circle at top, #1a1a3d, #000014);
-  color:rgb(255, 167, 167);
-  text-align:center;
   overflow:hidden;
+  font-family:system-ui, sans-serif;
+  background:linear-gradient(#0d0d2b,#000014);
+  color:rgb(255, 155, 155);
 }
 
-/* OWL */
-.owl{
+/* ====== STAR BACKGROUND ====== */
+.stars{
+  position:fixed;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  z-index:-1;
+}
+.star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:rgb(255, 255, 255);
+  border-radius:50%;
+  animation:twinkle 3s infinite alternate;
+}
+@keyframes twinkle{
+  from{opacity:0.2;}
+  to{opacity:1;}
+}
+
+/* ====== OWL ====== */
+.owl-container{
   position:absolute;
   top:20px;
   left:50%;
   transform:translateX(-50%);
-  font-size:70px;
-  transition:0.3s;
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(-8px);}
 }
 
-/* BLINK */
-@keyframes blink{
-  0%, 95%, 100%{transform:scaleY(1);}
-  97%{transform:scaleY(0.1);}
+.eye{
+  transition:all .3s ease;
 }
-.blink{
+
+.blink .eyelid{
   animation:blink 4s infinite;
 }
+@keyframes blink{
+  0%,95%,100%{height:0;}
+  97%{height:20px;}
+}
 
-/* PANIC */
+.panic{
+  animation:panic .6s;
+}
 @keyframes panic{
-  0%{transform:translateX(-50%) translateX(-10px);}
-  25%{transform:translateX(-50%) translateX(10px);}
-  50%{transform:translateX(-50%) translateX(-10px);}
-  75%{transform:translateX(-50%) translateX(10px);}
+  0%{transform:translateX(-50%) translateX(-8px);}
+  25%{transform:translateX(-50%) translateX(8px);}
+  50%{transform:translateX(-50%) translateX(-8px);}
+  75%{transform:translateX(-50%) translateX(8px);}
   100%{transform:translateX(-50%);}
 }
-.panic{
-  animation:panic 0.6s;
-}
 
-/* CHARACTERS */
+/* ====== CHARACTERS ====== */
 .character{
   position:absolute;
   bottom:120px;
-  width:120px;
-  height:180px;
+  width:140px;
+  text-align:center;
 }
 
-.boy{ left:10%; }
-.girl{ right:10%; }
+.boy{ left:5%; }
+.girl{ right:5%; }
 
 .head{
   width:100px;
   height:100px;
   border-radius:50%;
-  background:#ffe0bd;
   margin:auto;
+  background:#ffe0bd;
 }
 
 .body{
-  width:70px;
-  height:80px;
-  background:#5c8df6;
+  width:80px;
+  height:100px;
+  border-radius:30px;
   margin:auto;
-  border-radius:20px;
+  margin-top:-10px;
+  background:#5c8df6;
 }
+.girl .body{ background:#ff7aa2; }
 
-/* GIRL COLOR */
-.girl .body{
-  background:#ff7aa2;
-}
-
-/* DIALOGUE */
-#dialogue{
+/* ====== SPEECH ====== */
+.bubble{
   position:absolute;
   bottom:60px;
-  width:100%;
-  font-size:18px;
-  padding:10px;
-  min-height:60px;
+  max-width:80%;
+  padding:12px 16px;
+  background:white;
+  color:black;
+  border-radius:20px;
+  opacity:0;
+  transform:scale(.8);
+  transition:.3s ease;
 }
 
-/* OPTIONS */
+.show{
+  opacity:1;
+  transform:scale(1);
+}
+
+.left-bubble{ left:5%; }
+.right-bubble{ right:5%; }
+
+/* ====== OPTIONS ====== */
 .options{
   position:absolute;
   bottom:10px;
   width:100%;
+  text-align:center;
 }
-
 button{
-  padding:10px 20px;
-  margin:5px;
+  padding:12px 22px;
+  margin:6px;
   font-size:16px;
   border:none;
-  border-radius:20px;
+  border-radius:25px;
+  cursor:pointer;
+}
+.yes{ background:#ff4da6; color:white; }
+.no{ background:#444; color:white; }
+
+/* ====== CONFETTI ====== */
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  pointer-events:none;
 }
 
-/* CONFETTI */
-@keyframes confetti{
-  0%{transform:translateY(-10px);}
-  100%{transform:translateY(600px);}
-}
-.confetti{
+.center-text{
   position:absolute;
-  width:10px;
-  height:10px;
-  background:yellow;
-  animation:confetti 2s linear forwards;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:40px;
+  font-weight:bold;
+  display:none;
 }
 
 </style>
 </head>
 <body>
 
-<div id="owl" class="owl blink">(-_-)</div>
+<div class="stars" id="stars"></div>
+
+<div class="owl-container blink" id="owlContainer">
+<svg width="140" height="120" viewBox="0 0 140 120">
+  <circle cx="70" cy="60" r="50" fill="#c89cff"/>
+  
+  <!-- Eyes -->
+  <circle class="eye" id="leftEye" cx="50" cy="55" r="12" fill="black"/>
+  <circle class="eye" id="rightEye" cx="90" cy="55" r="12" fill="black"/>
+  
+  <!-- Eyelids -->
+  <rect class="eyelid" x="35" y="43" width="30" height="0" fill="#c89cff"/>
+  <rect class="eyelid" x="75" y="43" width="30" height="0" fill="#c89cff"/>
+  
+  <!-- Beak -->
+  <polygon points="65,70 75,70 70,80" fill="orange"/>
+  
+  <!-- Blush -->
+  <circle id="blushL" cx="40" cy="75" r="8" fill="pink" opacity="0"/>
+  <circle id="blushR" cx="100" cy="75" r="8" fill="pink" opacity="0"/>
+</svg>
+</div>
 
 <div class="character boy">
   <div class="head"></div>
@@ -131,147 +194,182 @@ button{
   <div class="body"></div>
 </div>
 
-<div id="dialogue"></div>
+<div id="bubble" class="bubble"></div>
 <div class="options" id="options"></div>
+<div class="center-text" id="centerText">Yay!</div>
+<canvas id="confetti"></canvas>
 
 <script>
 
-const owl = document.getElementById("owl");
-const dialogue = document.getElementById("dialogue");
-const options = document.getElementById("options");
+/* ====== STARS ====== */
+for(let i=0;i<100;i++){
+  let s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*3+"s";
+  document.getElementById("stars").appendChild(s);
+}
 
-let step = 0;
+/* ====== OWL CONTROL ====== */
+const leftEye=document.getElementById("leftEye");
+const rightEye=document.getElementById("rightEye");
+const blushL=document.getElementById("blushL");
+const blushR=document.getElementById("blushR");
+const owlContainer=document.getElementById("owlContainer");
 
-function lookLeft(){ owl.style.transform="translateX(-50%) rotate(-10deg)"; }
-function lookRight(){ owl.style.transform="translateX(-50%) rotate(10deg)"; }
-function center(){ owl.style.transform="translateX(-50%)"; }
+function lookLeft(){
+  leftEye.setAttribute("cx",45);
+  rightEye.setAttribute("cx",85);
+}
+function lookRight(){
+  leftEye.setAttribute("cx",55);
+  rightEye.setAttribute("cx",95);
+}
+function centerEyes(){
+  leftEye.setAttribute("cx",50);
+  rightEye.setAttribute("cx",90);
+}
+function blush(on){
+  blushL.style.opacity=on?1:0;
+  blushR.style.opacity=on?1:0;
+}
 
-function setOwl(face){
-  owl.classList.remove("panic");
-  owl.innerText = face;
+/* ====== STORY ====== */
+const bubble=document.getElementById("bubble");
+const options=document.getElementById("options");
+let step=0;
+
+function showBubble(text,side){
+  bubble.className="bubble "+(side==="left"?"left-bubble":"right-bubble");
+  bubble.innerText=text;
+  setTimeout(()=>bubble.classList.add("show"),50);
 }
 
 function next(){
-  step++;
-  options.innerHTML="";
-  runStory();
+  bubble.classList.remove("show");
+  setTimeout(()=>{
+    step++;
+    run();
+  },300);
 }
 
-function runStory(){
-
+function run(){
 switch(step){
 
 case 0:
-  setOwl("(-_-)"); // asleep
-  setTimeout(()=>{
-    setOwl("(•_•)");
-    next();
-  },1500);
+  setTimeout(()=>next(),1000);
 break;
 
 case 1:
   lookRight();
-  dialogue.innerText="Girl: Thank you for spending so much time with me.";
+  showBubble("Thank you for spending so much time with me.","right");
 break;
 
 case 2:
   lookLeft();
-  dialogue.innerText="Boy: You're welcome but it was mostly because I was curious how I felt about you.";
-  setOwl("(•.•)"); // curious
+  showBubble("You're welcome... I was curious how I felt about you.","left");
 break;
 
 case 3:
   lookRight();
-  dialogue.innerText="Girl: Oh, and what did you find out from being so curious?";
+  showBubble("Oh? And what did you find out?","right");
 break;
 
 case 4:
   lookLeft();
-  dialogue.innerText="Boy: I found out that I had a big crush on you in 10th grade.";
-  setOwl("(O_O)");
+  showBubble("I had a big crush on you in 10th grade.","left");
 break;
 
 case 5:
-  dialogue.innerText="Boy: and the current version I'm head over heels for.";
-  setOwl("(O_O)");
-  owl.classList.add("panic");
+  owlContainer.classList.add("panic");
+  showBubble("And now I'm head over heels for you.","left");
 break;
 
 case 6:
+  owlContainer.classList.remove("panic");
   lookRight();
-  dialogue.innerText="Girl: Hmmm... Do I feel the same way?";
+  showBubble("Hmm... Do I feel the same way?","right");
+  options.innerHTML=`
+    <button class="yes" onclick="girlChoice('yes')">Yes</button>
+    <button class="no" onclick="girlChoice('no')">No</button>
+    <button class="yes" onclick="girlChoice('maybe')">Maybe</button>
+  `;
 break;
 
 case 7:
-  dialogue.innerText="Choose:";
-  options.innerHTML=`
-    <button onclick="girlChoice('yes')">Yes</button>
-    <button onclick="girlChoice('no')">No</button>
-    <button onclick="girlChoice('maybe')">Maybe</button>
-  `;
+  lookLeft();
+  showBubble("So...","left");
 break;
 
 case 8:
-  lookLeft();
-  dialogue.innerText="Boy: So...";
-  setOwl("(•_•)");
-break;
-
-case 9:
-  dialogue.innerText="Boy: Will you be my valentine?";
-  setOwl("(>_<)");
+  blush(true);
+  showBubble("Will you be my valentine?","left");
   options.innerHTML=`
-    <button onclick="finalYes()">Yes</button>
-    <button id="noBtn">No</button>
+    <button class="yes" onclick="finalYes()">Yes</button>
+    <button class="no" id="noBtn">No</button>
   `;
-  
-  // Make NO impossible (long press 2 seconds)
-  const noBtn = document.getElementById("noBtn");
-  let pressTimer;
+  const noBtn=document.getElementById("noBtn");
+  let timer;
   noBtn.addEventListener("touchstart",()=>{
-    pressTimer = setTimeout(()=>{
-      alert("It seems destiny disagrees 💕");
+    timer=setTimeout(()=>{
+      alert("Destiny says no choosing no 💕");
     },2000);
   });
-  noBtn.addEventListener("touchend",()=>{
-    clearTimeout(pressTimer);
-  });
-
+  noBtn.addEventListener("touchend",()=>clearTimeout(timer));
 break;
 }
 }
 
 function girlChoice(choice){
-  if(choice==="yes"){
-    setOwl("(>///<)");
-    next();
-  }
-  if(choice==="no"){
-    setOwl("(;_;)");
-  }
-  if(choice==="maybe"){
-    setOwl("(-_-)");
-  }
-}
-
-function finalYes(){
-  setOwl("^_^");
-  dialogue.innerText="Yay!";
   options.innerHTML="";
-  for(let i=0;i<40;i++){
-    let c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"%";
-    c.style.background=`hsl(${Math.random()*360},100%,50%)`;
-    document.body.appendChild(c);
-  }
+  if(choice==="yes"){ blush(true); }
+  if(choice==="no"){ blush(false); }
+  if(choice==="maybe"){ centerEyes(); }
+  next();
 }
 
-document.body.addEventListener("click", next);
+/* ====== CONFETTI ====== */
+function finalYes(){
+  document.getElementById("centerText").style.display="block";
+  startConfetti();
+}
 
-runStory();
+function startConfetti(){
+  const canvas=document.getElementById("confetti");
+  const ctx=canvas.getContext("2d");
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  let pieces=[];
+  for(let i=0;i<120;i++){
+    pieces.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height- canvas.height,
+      r:Math.random()*6+4,
+      d:Math.random()*50
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+      ctx.fill();
+      p.y+=3;
+      if(p.y>canvas.height)p.y=0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+document.body.addEventListener("click",()=>{
+  if(step<6 || step===7) next();
+});
+
+run();
 
 </script>
-
 </body>
 </html>
