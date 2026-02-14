@@ -1,375 +1,458 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Valentine Story</title>
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Interactive Story</title>
 
-body{
-  margin:0;
-  overflow:hidden;
-  font-family:system-ui, sans-serif;
-  background:linear-gradient(#0d0d2b,#000014);
-  color:rgb(255, 155, 155);
-}
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-/* ====== STAR BACKGROUND ====== */
-.stars{
-  position:fixed;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  z-index:-1;
-}
-.star{
-  position:absolute;
-  width:2px;
-  height:2px;
-  background:rgb(255, 255, 255);
-  border-radius:50%;
-  animation:twinkle 3s infinite alternate;
-}
-@keyframes twinkle{
-  from{opacity:0.2;}
-  to{opacity:1;}
-}
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: system-ui, sans-serif;
+            background: linear-gradient(#0d0d2b, #000014);
+            color: #ffd1dc;
+            text-align: center;
+        }
 
-/* ====== OWL ====== */
-.owl-container{
-  position:absolute;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  animation:float 4s ease-in-out infinite;
-}
-@keyframes float{
-  0%,100%{transform:translateX(-50%) translateY(0);}
-  50%{transform:translateX(-50%) translateY(-8px);}
-}
+        /* Stars */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
 
-.eye{
-  transition:all .3s ease;
-}
+        @keyframes twinkle {
+            from {
+                opacity: .2
+            }
 
-.blink .eyelid{
-  animation:blink 4s infinite;
-}
-@keyframes blink{
-  0%,95%,100%{height:0;}
-  97%{height:20px;}
-}
+            to {
+                opacity: 1
+            }
+        }
 
-.panic{
-  animation:panic .6s;
-}
-@keyframes panic{
-  0%{transform:translateX(-50%) translateX(-8px);}
-  25%{transform:translateX(-50%) translateX(8px);}
-  50%{transform:translateX(-50%) translateX(-8px);}
-  75%{transform:translateX(-50%) translateX(8px);}
-  100%{transform:translateX(-50%);}
-}
+        /* Owl */
+        .owl {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
 
-/* ====== CHARACTERS ====== */
-.character{
-  position:absolute;
-  bottom:120px;
-  width:140px;
-  text-align:center;
-}
+        .eye {
+            transition: .3s ease;
+        }
 
-.boy{ left:5%; }
-.girl{ right:5%; }
+        /* Characters */
+        .character {
+            position: absolute;
+            bottom: 120px;
+            width: 140px;
+            opacity: 0;
+            transition: opacity .8s ease;
+        }
 
-.head{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  margin:auto;
-  background:#ffe0bd;
-}
+        .boy {
+            left: 5%;
+        }
 
-.body{
-  width:80px;
-  height:100px;
-  border-radius:30px;
-  margin:auto;
-  margin-top:-10px;
-  background:#5c8df6;
-}
-.girl .body{ background:#ff7aa2; }
+        .girl {
+            right: 5%;
+        }
 
-/* ====== SPEECH ====== */
-.bubble{
-  position:absolute;
-  bottom:60px;
-  max-width:80%;
-  padding:12px 16px;
-  background:white;
-  color:black;
-  border-radius:20px;
-  opacity:0;
-  transform:scale(.8);
-  transition:.3s ease;
-}
+        .head {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: auto;
+            background: #ffe0bd;
+        }
 
-.show{
-  opacity:1;
-  transform:scale(1);
-}
+        .body {
+            width: 80px;
+            height: 100px;
+            border-radius: 30px;
+            margin: auto;
+            margin-top: -10px;
+            background: #5c8df6;
+        }
 
-.left-bubble{ left:5%; }
-.right-bubble{ right:5%; }
+        .girl .body {
+            background: #ff7aa2;
+        }
 
-/* ====== OPTIONS ====== */
-.options{
-  position:absolute;
-  bottom:10px;
-  width:100%;
-  text-align:center;
-}
-button{
-  padding:12px 22px;
-  margin:6px;
-  font-size:16px;
-  border:none;
-  border-radius:25px;
-  cursor:pointer;
-}
-.yes{ background:#ff4da6; color:white; }
-.no{ background:#444; color:white; }
+        /* Text Area */
 
-/* ====== CONFETTI ====== */
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-  pointer-events:none;
-}
+        .speech {
+            position: absolute;
+            width: 220px;
+            min-height: 40px;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
 
-.center-text{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:40px;
-  font-weight:bold;
-  display:none;
-}
+        .boySpeech {
+            left: 5%;
+            bottom: 260px;
+            /* ABOVE BOY */
+            text-align: left;
+        }
 
-</style>
+        .girlSpeech {
+            right: 5%;
+            bottom: 260px;
+            /* ABOVE GIRL */
+            text-align: right;
+        }
+
+        .centerSpeech {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            font-size: 20px;
+        }
+
+        /* Text Area */
+        #text {
+            position: absolute;
+            bottom: 70px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 18px;
+            min-height: 80px;
+        }
+
+        .hint {
+            font-size: 13px;
+            opacity: .6;
+            margin-top: 6px;
+        }
+
+        /* Buttons */
+        .options {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+        }
+
+        button {
+            position: absolute;
+            padding: 14px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #yesBtn {
+            left: 20%;
+            background: #ff3b7a;
+            color: white;
+        }
+
+        #noBtn {
+            left: 60%;
+            background: #e5e7eb;
+        }
+
+        /* Confetti canvas */
+        #confettiCanvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .centerText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 42px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="stars" id="stars"></div>
+    <canvas id="confettiCanvas"></canvas>
+    <div class="centerText" id="centerText">Yay! 🎉</div>
 
-<div class="owl-container blink" id="owlContainer">
-<svg width="140" height="120" viewBox="0 0 140 120">
-  <circle cx="70" cy="60" r="50" fill="#c89cff"/>
-  
-  <!-- Eyes -->
-  <circle class="eye" id="leftEye" cx="50" cy="55" r="12" fill="black"/>
-  <circle class="eye" id="rightEye" cx="90" cy="55" r="12" fill="black"/>
-  
-  <!-- Eyelids -->
-  <rect class="eyelid" x="35" y="43" width="30" height="0" fill="#c89cff"/>
-  <rect class="eyelid" x="75" y="43" width="30" height="0" fill="#c89cff"/>
-  
-  <!-- Beak -->
-  <polygon points="65,70 75,70 70,80" fill="orange"/>
-  
-  <!-- Blush -->
-  <circle id="blushL" cx="40" cy="75" r="8" fill="pink" opacity="0"/>
-  <circle id="blushR" cx="100" cy="75" r="8" fill="pink" opacity="0"/>
-</svg>
-</div>
+    <!-- Owl -->
+    <div class="owl">
+        <svg width="140" height="120">
+            <circle cx="70" cy="60" r="50" fill="#c89cff" />
+            <circle id="leftEye" cx="50" cy="55" r="10" fill="black" />
+            <circle id="rightEye" cx="90" cy="55" r="10" fill="black" />
+            <rect id="lidL" x="40" y="45" width="20" height="20" fill="#c89cff" />
+            <rect id="lidR" x="80" y="45" width="20" height="20" fill="#c89cff" />
+        </svg>
+    </div>
 
-<div class="character boy">
-  <div class="head"></div>
-  <div class="body"></div>
-</div>
+    <!-- Characters -->
+    <div class="character boy" id="boy">
+        <div class="head"></div>
+        <div class="body"></div>
+    </div>
+    <div class="character girl" id="girl">
+        <div class="head"></div>
+        <div class="body"></div>
+    </div>
 
-<div class="character girl">
-  <div class="head"></div>
-  <div class="body"></div>
-</div>
+    <div id="boyText" class="speech boySpeech"></div>
+    <div id="girlText" class="speech girlSpeech"></div>
+    <div id="centerTextLine" class="centerSpeech"></div>
 
-<div id="bubble" class="bubble"></div>
-<div class="options" id="options"></div>
-<div class="center-text" id="centerText">Yay!</div>
-<canvas id="confetti"></canvas>
+    <div id="hint" class="hint"></div>
+    <div class="options" id="options"></div>
 
-<script>
+    <script>
 
-/* ====== STARS ====== */
-for(let i=0;i<100;i++){
-  let s=document.createElement("div");
-  s.className="star";
-  s.style.left=Math.random()*100+"%";
-  s.style.top=Math.random()*100+"%";
-  s.style.animationDelay=Math.random()*3+"s";
-  document.getElementById("stars").appendChild(s);
-}
+        /* Stars */
+        for (let i = 0; i < 100; i++) {
+            let s = document.createElement("div");
+            s.className = "star";
+            s.style.left = Math.random() * 100 + "%";
+            s.style.top = Math.random() * 100 + "%";
+            s.style.animationDelay = Math.random() * 3 + "s";
+            document.body.appendChild(s);
+        }
 
-/* ====== OWL CONTROL ====== */
-const leftEye=document.getElementById("leftEye");
-const rightEye=document.getElementById("rightEye");
-const blushL=document.getElementById("blushL");
-const blushR=document.getElementById("blushR");
-const owlContainer=document.getElementById("owlContainer");
+        /* Owl control */
+        const leftEye = document.getElementById("leftEye");
+        const rightEye = document.getElementById("rightEye");
+        const lidL = document.getElementById("lidL");
+        const lidR = document.getElementById("lidR");
 
-function lookLeft(){
-  leftEye.setAttribute("cx",45);
-  rightEye.setAttribute("cx",85);
-}
-function lookRight(){
-  leftEye.setAttribute("cx",55);
-  rightEye.setAttribute("cx",95);
-}
-function centerEyes(){
-  leftEye.setAttribute("cx",50);
-  rightEye.setAttribute("cx",90);
-}
-function blush(on){
-  blushL.style.opacity=on?1:0;
-  blushR.style.opacity=on?1:0;
-}
+        function openEyes() {
+            lidL.style.height = "0";
+            lidR.style.height = "0";
+        }
+        function lookLeft() {
+            leftEye.setAttribute("cx", 45);
+            rightEye.setAttribute("cx", 85);
+        }
+        function lookRight() {
+            leftEye.setAttribute("cx", 55);
+            rightEye.setAttribute("cx", 95);
+        }
+        function lookDown() {
+            leftEye.setAttribute("cy", 60);
+            rightEye.setAttribute("cy", 60);
+        }
 
-/* ====== STORY ====== */
-const bubble=document.getElementById("bubble");
-const options=document.getElementById("options");
-let step=0;
+        /* Typewriter */
+        const boyText = document.getElementById("boyText");
+        const girlText = document.getElementById("girlText");
+        const centerTextLine = document.getElementById("centerTextLine");
 
-function showBubble(text,side){
-  bubble.className="bubble "+(side==="left"?"left-bubble":"right-bubble");
-  bubble.innerText=text;
-  setTimeout(()=>bubble.classList.add("show"),50);
-}
+        const hint = document.getElementById("hint");
 
-function next(){
-  bubble.classList.remove("show");
-  setTimeout(()=>{
-    step++;
-    run();
-  },300);
-}
+        let typing = false;
+        let typingInterval = null;
+        let currentLine = "";
+        let currentIndex = 0;
 
-function run(){
-switch(step){
+        function typeLine(line, target, cb) {
+            if (typing) return;
 
-case 0:
-  setTimeout(()=>next(),1000);
-break;
+            typing = true;
+            currentLine = line;
+            currentIndex = 0;
 
-case 1:
-  lookRight();
-  showBubble("Thank you for spending so much time with me.","right");
-break;
+            boyText.style.opacity = 0;
+            girlText.style.opacity = 0;
+            centerTextLine.style.opacity = 0;
 
-case 2:
-  lookLeft();
-  showBubble("You're welcome... I was curious how I felt about you.","left");
-break;
+            target.innerHTML = "";
+            target.style.opacity = 1;
 
-case 3:
-  lookRight();
-  showBubble("Oh? And what did you find out?","right");
-break;
+            clearInterval(typingInterval);
 
-case 4:
-  lookLeft();
-  showBubble("I had a big crush on you in 10th grade.","left");
-break;
+            typingInterval = setInterval(() => {
+                target.innerHTML += currentLine[currentIndex];
+                currentIndex++;
 
-case 5:
-  owlContainer.classList.add("panic");
-  showBubble("And now I'm head over heels for you.","left");
-break;
+                if (currentIndex >= currentLine.length) {
+                    clearInterval(typingInterval);
+                    typing = false;
+                    if (cb) cb();
+                }
+            }, 35);
+        }
 
-case 6:
-  owlContainer.classList.remove("panic");
-  lookRight();
-  showBubble("Hmm... Do I feel the same way?","right");
-  options.innerHTML=`
-    <button class="yes" onclick="girlChoice('yes')">Yes</button>
-    <button class="no" onclick="girlChoice('no')">No</button>
-    <button class="yes" onclick="girlChoice('maybe')">Maybe</button>
-  `;
-break;
+        /* STORY FLOW */
+        let stage = 0;
 
-case 7:
-  lookLeft();
-  showBubble("So...","left");
-break;
+        const dialogue = [
+            ["G", "Ty for making my trip so memorable"],
+            ["B", "You're welcome"],
+            ["B", "But I had a selfish reason for doing all that"],
+            ["G", "Like what?"],
+            ["B", "...I was curious"],
+            ["G", "Huh?"],
+            ["B", "I was curious how I felt about you."],
+            ["B", "Weather how I feel about you is the current you"],
+            ["B", "Or nostalgia for the old you"],
+            ["G", "So...what did you find out?"],
+            ["B", "Well I'm fairly certain how I feel now."],
+            ["B", "It turns out the grade 10 version of you,"],
+            ["B", "I had the biggest crush on"],
+            ["B", "And the current version of you..."],
+            ["B", "I'm head over heels for <3"],
+            ["G", "Hmmm....I wonder if I feel the same..."],
+            ["G", "...Yes"],
+            ["G", "...No"],
+            ["G", "...Maybe"],
+            ["B", "I'll accept that for now."]
+        ];
 
-case 8:
-  blush(true);
-  showBubble("Will you be my valentine?","left");
-  options.innerHTML=`
-    <button class="yes" onclick="finalYes()">Yes</button>
-    <button class="no" id="noBtn">No</button>
-  `;
-  const noBtn=document.getElementById("noBtn");
-  let timer;
-  noBtn.addEventListener("touchstart",()=>{
-    timer=setTimeout(()=>{
-      alert("Destiny says no choosing no 💕");
-    },2000);
-  });
-  noBtn.addEventListener("touchend",()=>clearTimeout(timer));
-break;
-}
-}
+        const narration = [
+            "Things have gotten more complicated since then.",
+            "But I'm happy with how the story played out so far",
+            "And I hope it has a happy ending In Sha Allah.",
+            "Speaking of...I was curious again about sth"
+        ];
 
-function girlChoice(choice){
-  options.innerHTML="";
-  if(choice==="yes"){ blush(true); }
-  if(choice==="no"){ blush(false); }
-  if(choice==="maybe"){ centerEyes(); }
-  next();
-}
+        document.body.addEventListener("click", next);
 
-/* ====== CONFETTI ====== */
-function finalYes(){
-  document.getElementById("centerText").style.display="block";
-  startConfetti();
-}
+        function next() {
+            if (stage === 0) {
+                openEyes();
+                lookDown();
+                typeLine("One Faithful Night", centerTextLine, () => {
+                    hint.innerText = "Tap to continue";
+                    stage = 1;
+                });
+            }
+            else if (stage === 1) {
+                hint.innerText = "";
+                typeLine("Wayyy past any sane person's bedtime.", centerTextLine, () => {
+                    document.getElementById("boy").style.opacity = 1;
+                    document.getElementById("girl").style.opacity = 1;
+                    stage = 2;
+                });
+            }
+            else if (stage >= 2 && stage < 2 + dialogue.length) {
+                let [who, line] = dialogue[stage - 2];
+                if (who === "G") lookRight(); else lookLeft();
+                if (who === "G") {
+                    lookRight();
+                    typeLine(line, girlText);
+                } else {
+                    lookLeft();
+                    typeLine(line, boyText);
+                }
+                stage++;
+            }
+            else if (stage === 2 + dialogue.length) {
+                document.getElementById("boy").style.opacity = 0;
+                document.getElementById("girl").style.opacity = 0;
+                stage++;
+                runNarration(0);
+            }
+        }
 
-function startConfetti(){
-  const canvas=document.getElementById("confetti");
-  const ctx=canvas.getContext("2d");
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-  let pieces=[];
-  for(let i=0;i<120;i++){
-    pieces.push({
-      x:Math.random()*canvas.width,
-      y:Math.random()*canvas.height- canvas.height,
-      r:Math.random()*6+4,
-      d:Math.random()*50
-    });
-  }
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p=>{
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
-      ctx.fill();
-      p.y+=3;
-      if(p.y>canvas.height)p.y=0;
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-}
+        function runNarration(i) {
+            if (i < narration.length) {
+                typeLine(narration[i], centerTextLine, () => {
+                    document.body.addEventListener("click", function handler() {
+                        document.body.removeEventListener("click", handler);
+                        runNarration(i + 1);
+                    });
+                });
+            } else {
+                showFinalQuestion();
+            }
+        }
 
-document.body.addEventListener("click",()=>{
-  if(step<6 || step===7) next();
-});
+        /* Final Question */
+        function showFinalQuestion() {
+            typeLine("Will you be my Valentine?", centerTextLine, () => {
+                const options = document.getElementById("options");
+                options.innerHTML = `
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    `;
+                const yes = document.getElementById("yesBtn");
+                const no = document.getElementById("noBtn");
 
-run();
+                let scale = 1;
 
-</script>
+                function growYes() {
+                    scale = Math.min(2.2, scale + 0.1);
+                    yes.style.transform = `scale(${scale})`;
+                }
+
+                function moveNo(e) {
+                    const x = Math.random() * 60 + 20;
+                    const y = Math.random() * 60 + 20;
+                    no.style.left = x + "%";
+                    no.style.top = y + "%";
+                    growYes();
+                }
+
+                no.addEventListener("pointerenter", moveNo);
+                no.addEventListener("touchstart", moveNo);
+
+                yes.addEventListener("click", () => {
+                    options.style.display = "none";
+                    text.style.display = "none";
+                    document.getElementById("centerText").style.display = "block";
+                    launchConfetti();
+                });
+            });
+        }
+
+        /* Confetti */
+        const confettiCanvas = document.getElementById("confettiCanvas");
+        function resizeCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        const confettiInstance = confetti.create(confettiCanvas, { resize: true, useWorker: true });
+
+        function launchConfetti() {
+            const end = Date.now() + 1500;
+            (function frame() {
+                confettiInstance({
+                    particleCount: 12,
+                    spread: 90,
+                    startVelocity: 45,
+                    origin: { x: Math.random(), y: Math.random() * 0.3 }
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            })();
+            setTimeout(() => {
+                confettiInstance({
+                    particleCount: 300,
+                    spread: 140,
+                    startVelocity: 60,
+                    origin: { x: 0.5, y: 0.55 }
+                });
+            }, 300);
+        }
+
+    </script>
 </body>
+
 </html>
