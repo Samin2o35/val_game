@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Win My Heart 💖</title>
+
+<style>
+body{
+  margin:0;
+  background:linear-gradient(#ffe6f0,#ffd6e7);
+  font-family:system-ui;
+  text-align:center;
+  overflow:hidden;
+}
+
+h1{
+  margin-top:20px;
+}
+
+#gameArea{
+  position:relative;
+  width:100vw;
+  height:70vh;
+  overflow:hidden;
+}
+
+.heart{
+  position:absolute;
+  font-size:32px;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .1s;
+}
+
+#meterContainer{
+  width:80%;
+  height:20px;
+  background:#eee;
+  margin:20px auto;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+#meter{
+  height:100%;
+  width:0%;
+  background:#ff3b7a;
+  transition:.2s;
+}
+
+#final{
+  display:none;
+  margin-top:20px;
+}
+
+button{
+  padding:14px 24px;
+  font-size:18px;
+  border:none;
+  border-radius:30px;
+  background:#ff3b7a;
+  color:white;
+  margin:10px;
+}
+</style>
+</head>
+<body>
+
+<h1>Catch My Love 💖</h1>
+
+<div id="meterContainer">
+  <div id="meter"></div>
+</div>
+
+<div id="gameArea"></div>
+
+<div id="final">
+  <h2>You've won my heart 🥰</h2>
+  <h1>Will you be my Valentine?</h1>
+  <button id="yesBtn">YES 💕</button>
+</div>
+
+<script>
+const gameArea=document.getElementById("gameArea");
+const meter=document.getElementById("meter");
+const final=document.getElementById("final");
+const yesBtn=document.getElementById("yesBtn");
+
+let love=0;
+let gameActive=true;
+
+function updateMeter(){
+  meter.style.width=love+"%";
+  if(love>=100){
+    endGame();
+  }
+}
+
+function spawnHeart(){
+  if(!gameActive) return;
+
+  const heart=document.createElement("div");
+  heart.className="heart";
+
+  const isBroken=Math.random()<0.25;
+  heart.textContent=isBroken?"💔":"💖";
+
+  heart.style.left=Math.random()*90+"vw";
+  heart.style.top="100%";
+
+  gameArea.appendChild(heart);
+
+  let pos=100;
+
+  const move=setInterval(()=>{
+    pos-=1;
+    heart.style.top=pos+"%";
+    if(pos< -10){
+      clearInterval(move);
+      heart.remove();
+    }
+  },30);
+
+  heart.addEventListener("pointerdown",()=>{
+    if(!gameActive) return;
+    if(isBroken){
+      love=Math.max(0,love-15);
+    }else{
+      love=Math.min(100,love+10);
+    }
+    updateMeter();
+    clearInterval(move);
+    heart.remove();
+  });
+}
+
+function endGame(){
+  gameActive=false;
+  gameArea.innerHTML="";
+  final.style.display="block";
+}
+
+setInterval(spawnHeart,800);
+
+yesBtn.addEventListener("click",()=>{
+  final.innerHTML="<h1>YAY!! 💕💕💕</h1>";
+  document.body.style.background="linear-gradient(#ffb6d9,#ff69b4)";
+});
+</script>
+
+</body>
+</html>
